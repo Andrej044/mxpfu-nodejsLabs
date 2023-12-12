@@ -32,14 +32,17 @@ router.get("/",(req,res)=>{
 // GET by specific ID request: Retrieve a single user with email ID
 router.get("/:email",(req,res)=>{
   // Copy the code here
-  res.send("Yet to be implemented")//This line is to be replaced with actual return value
+  const filteredUser = users.filter( user => req.params.email === user.email);
+  res.send(filteredUser)//This line is to be replaced with actual return value
 });
 
 
 // POST request: Create a new user
 router.post("/",(req,res)=>{
   // Copy the code here
-  res.send("Yet to be implemented")//This line is to be replaced with actual return value
+  const newUser = req.query;
+  users.push(newUser);
+  res.send("The user " + req.query.firstName + " has been added!")//This line is to be replaced with actual return value
 });
 
 
