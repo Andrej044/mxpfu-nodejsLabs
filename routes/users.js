@@ -49,7 +49,32 @@ router.post("/",(req,res)=>{
 // PUT request: Update the details of a user by email ID
 router.put("/:email", (req, res) => {
   // Copy the code here
-  res.send("Yet to be implemented")//This line is to be replaced with actual return value
+    let filtered_users = users.filter((user) => user.email === req.params.email);
+    if (filtered_users.length > 0) {
+        let filtered_user = filtered_users[0];
+        let DOB = req.query.DOB;
+        let firstName = req.query.firstName;
+        let lastName = req.query.lastName;
+        //if the DOB has changed
+        if(DOB) {
+            filtered_user.DOB = DOB
+        }
+        if(firstName) {
+            filtered_user.firstName = firstName
+        }
+        if(lastName) {
+            filtered_user.lastName = firstName
+        }
+        /*
+        Include code here similar to the one above for other attibutes
+        */
+        users = users.filter((user) => user.email != req.params.email);
+        users.push(filtered_user);
+        res.send(`User with the email  ${req.params.email} updated.`);
+    }
+    else{
+        res.send("Unable to find user!");
+    }
 });
 
 
