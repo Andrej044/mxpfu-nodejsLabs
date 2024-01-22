@@ -26,64 +26,84 @@ let users = [
 // GET request: Retrieve all users
 router.get("/",(req,res)=>{
   // Copy the code here
-  res.send(JSON.stringify({users}, null, 4))//This line is to be replaced with actual return value
+  res.send(users)//This line is to be replaced with actual return value
 });
 
 // GET by specific ID request: Retrieve a single user with email ID
 router.get("/:email",(req,res)=>{
-  // Copy the code here
-  const filteredUser = users.filter( user => req.params.email === user.email);
-  res.send(filteredUser)//This line is to be replaced with actual return value
+    const email = req.params.email;
+    let filtered_users = users.filter((user) => user.email === email);
+    res.send(filtered_users);
 });
 
 
 // POST request: Create a new user
-router.post("/",(req,res)=>{
-  // Copy the code here
-  const newUser = req.query;
-  users.push(newUser);
-  res.send("The user " + req.query.firstName + " has been added!")//This line is to be replaced with actual return value
+router.post("/new/",(req,res)=>{
+    users.push({"firstName":req.query.firstName,"lastName":req.query.lastName,"email":req.query.email,"DOB":req.query.DOB});
+    res.send("The user" + (' ')+ (req.query.firstName) + " Has been added!")
 });
 
 
 // PUT request: Update the details of a user by email ID
 router.put("/:email", (req, res) => {
-  // Copy the code here
-    let filtered_users = users.filter((user) => user.email === req.params.email);
-    if (filtered_users.length > 0) {
-        let filtered_user = filtered_users[0];
-        let DOB = req.query.DOB;
-        let firstName = req.query.firstName;
-        let lastName = req.query.lastName;
-        //if the DOB has changed
-        if(DOB) {
-            filtered_user.DOB = DOB
-        }
-        if(firstName) {
-            filtered_user.firstName = firstName
-        }
-        if(lastName) {
-            filtered_user.lastName = firstName
-        }
-        /*
-        Include code here similar to the one above for other attibutes
-        */
-        users = users.filter((user) => user.email != req.params.email);
-        users.push(filtered_user);
-        res.send(`User with the email  ${req.params.email} updated.`);
-    }
-    else{
-        res.send("Unable to find user!");
-    }
+    // Copy the code here
+      let filtered_users = users.filter((user) => user.email === req.params.email);
+      if (filtered_users.length > 0) {
+          let filtered_user = filtered_users[0];
+          let DOB = req.query.DOB;
+          let firstName = req.query.firstName;
+          let lastName = req.query.lastName;
+          //if the DOB has changed
+          if(DOB) {
+              filtered_user.DOB = DOB
+          }
+          if(firstName) {
+              filtered_user.firstName = firstName
+          }
+          if(lastName) {
+              filtered_user.lastName = firstName
+          }
+          /*
+          Include code here similar to the one above for other attibutes
+          */
+          users = users.filter((user) => user.email != req.params.email);
+          users.push(filtered_user);
+          res.send(`User with the email  ${req.params.email} updated.`);
+      }
+      else{
+          res.send("Unable to find user!");
+      }
+  });
+
+
+      // GET users with a particular Last Name eg. 'Smith'
+router.get("/lastName/:lastName",(req,res)=>{
+    const lastName = req.params.lastName;
+    let filtered_lastname = users.filter((user) => user.lastName === lastName);
+    res.send(filtered_lastname);
 });
 
 
 // DELETE request: Delete a user by email ID
 router.delete("/:email", (req, res) => {
-  // Copy the code here
-  const email = req.params.email;
-  users = users.filter(user => user.email != email);
-  res.send(`User with email ${email} deleted`)//This line is to be replaced with actual return value
-});
+    const email = req.params.email;
+    users = users.filter((user) => user.email != email);
+    res.send(`User with the email  ${email} deleted.`);
+  });
 
 module.exports=router;
+
+function getDateFromString(strDate) {
+    let [dd,mm,yyyy] = strDate.split('-')
+    return new Date(yyyy+"/"+mm+"/"+dd);
+}
+    
+// console.log(sorted_users);
+router.get("/sort",(req,res)=>{
+    let sorted_users=users.sort(function(a, b) {
+        let d1 = getDateFromString(a.DOB);
+        let d2 = getDateFromString(b.DOB);
+            return d1-d2;
+          });
+    res.send(sorted_users);
+});
